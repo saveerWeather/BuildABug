@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collapsible JSON Viewer</title>
+    <style>
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+        }
+        .content {
+            display: none;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bug Profiles</h1>
+    <div id="jsonViewer"></div>
+
+    <script>
+        fetch('bugprofiles.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('jsonViewer').appendChild(createCollapsibleJson(data));
+            });
+
+        function createCollapsibleJson(obj) {
+            const container = document.createElement('div');
+            for (const key in obj) {
+                if (typeof obj[key] === 'object' && obj[key] !== null) {
+                    const collapsible = document.createElement('div');
+                    collapsible.classList.add('collapsible');
+                    collapsible.textContent = key;
+                    collapsible.addEventListener('click', function() {
+                        this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block';
+                    });
+
+                    const content = document.createElement('div');
+                    content.classList.add('content');
+                    content.appendChild(createCollapsibleJson(obj[key]));
+
+                    container.appendChild(collapsible);
+                    container.appendChild(content);
+                } else {
+                    const item = document.createElement('div');
+                    item.textContent = `${key}: ${obj[key]}`;
+                    container.appendChild(item);
+                }
+            }
+            return container;
+        }
+    </script>
+</body>
+</html>
