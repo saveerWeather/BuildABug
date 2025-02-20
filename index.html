@@ -9,61 +9,80 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             padding: 20px;
-            text-align: center;
         }
         h1 {
             text-align: center;
             margin-bottom: 30px;
         }
-        .bug-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .bug-item {
-            width: 200px;
-            padding: 15px;
-            background-color: #fff;
+        .bug {
             border: 1px solid #ccc;
             border-radius: 8px;
-            text-align: center;
-            transition: transform 0.2s;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background-color: #fff;
         }
-        .bug-item:hover {
-            transform: scale(1.1);
+        .bug-header {
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
             cursor: pointer;
+            font-weight: bold;
         }
-        .gene-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            padding: 20px;
+        .bug-content {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid #ccc;
         }
         .gene-box {
+            margin-bottom: 10px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 8px;
-            padding: 15px;
-            background-color: #fff;
-            text-align: left;
+            background-color: #f9f9f9;
         }
     </style>
 </head>
 <body>
     <h1>Bug Profiles</h1>
-    <div class="bug-list" id="bugList"></div>
+    <div id="bugContainer"></div>
 
     <script>
-        const bugs = ['Bug1', 'Bug2', 'Bug3', 'Bug4']; // Replace with actual bug names
+        fetch('bugprofiles.json')
+            .then(response => response.json())
+            .then(data => {
+                const bugContainer = document.getElementById('bugContainer');
 
-        const bugList = document.getElementById('bugList');
-        bugs.forEach(bug => {
-            const bugItem = document.createElement('div');
-            bugItem.classList.add('bug-item');
-            bugItem.textContent = bug;
-            bugItem.onclick = () => window.location.href = `${bug.toLowerCase()}.html`;
-            bugList.appendChild(bugItem);
-        });
+                Object.keys(data).forEach(bugName => {
+                    const bugDiv = document.createElement('div');
+                    bugDiv.classList.add('bug');
+
+                    const header = document.createElement('div');
+                    header.classList.add('bug-header');
+                    header.textContent = bugName;
+                    header.onclick = () => {
+                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                    };
+
+                    const content = document.createElement('div');
+                    content.classList.add('bug-content');
+
+                    data[bugName].forEach((gene, i) => {
+                        const geneBox = document.createElement('div');
+                        geneBox.classList.add('gene-box');
+                        geneBox.innerHTML = `<strong>Gene: ${i + 1}</strong><br><br>
+                            DNA: ______<br>
+                            mRNA: ${gene.mRNA}<br>
+                            tRNA: ${gene.tRNA}<br>
+                            Amino acid sequence: ${gene.aminoAcidSequence}<br>
+                            Trait: ${gene.trait}`;
+                        content.appendChild(geneBox);
+                    });
+
+                    bugDiv.appendChild(header);
+                    bugDiv.appendChild(content);
+                    bugContainer.appendChild(bugDiv);
+                });
+            });
     </script>
 </body>
-</html>s
+</html>
