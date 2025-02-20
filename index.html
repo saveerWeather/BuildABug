@@ -3,85 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collapsible JSON Viewer</title>
+    <title>Bug Profiles</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             padding: 20px;
+            text-align: center;
         }
         h1 {
             text-align: center;
+            margin-bottom: 30px;
         }
-        .collapsible {
-            cursor: pointer;
-            user-select: none;
-            font-weight: bold;
-            padding: 10px;
-            background-color: #ddd;
-            border: 1px solid #ccc;
-            margin-top: 5px;
+        .bug-list {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
         }
-        .collapsible::before {
-            content: '\25BC';
-            margin-right: 10px;
+        .bug-item {
+            width: 200px;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
             transition: transform 0.2s;
         }
-        .content {
-            display: block;
-            padding-left: 20px;
+        .bug-item:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+        .gene-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+        }
+        .gene-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
             background-color: #fff;
-            border-left: 3px solid #ddd;
-            margin-bottom: 5px;
-            padding: 10px;
-        }
-        .collapsed + .content {
-            display: none;
-        }
-        .collapsed::before {
-            content: '\25B6';
-            transform: rotate(0deg);
+            text-align: left;
         }
     </style>
 </head>
 <body>
     <h1>Bug Profiles</h1>
-    <div id="jsonViewer"></div>
+    <div class="bug-list" id="bugList"></div>
 
     <script>
-        fetch('bugprofiles.json')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('jsonViewer').appendChild(createCollapsibleJson(data));
-            });
+        const bugs = ['Bug1', 'Bug2', 'Bug3', 'Bug4']; // Replace with actual bug names
 
-        function createCollapsibleJson(obj) {
-            const container = document.createElement('div');
-            for (const key in obj) {
-                const collapsible = document.createElement('div');
-                collapsible.classList.add('collapsible');
-                collapsible.textContent = key;
-                collapsible.addEventListener('click', function() {
-                    this.classList.toggle('collapsed');
-                    this.nextElementSibling.style.display = this.classList.contains('collapsed') ? 'none' : 'block';
-                });
-
-                const content = document.createElement('div');
-                content.classList.add('content');
-
-                if (typeof obj[key] === 'object' && obj[key] !== null) {
-                    content.appendChild(createCollapsibleJson(obj[key]));
-                } else {
-                    content.textContent = obj[key];
-                }
-
-                container.appendChild(collapsible);
-                container.appendChild(content);
-            }
-            return container;
-        }
+        const bugList = document.getElementById('bugList');
+        bugs.forEach(bug => {
+            const bugItem = document.createElement('div');
+            bugItem.classList.add('bug-item');
+            bugItem.textContent = bug;
+            bugItem.onclick = () => window.location.href = `${bug.toLowerCase()}.html`;
+            bugList.appendChild(bugItem);
+        });
     </script>
 </body>
-</html>
+</html>s
